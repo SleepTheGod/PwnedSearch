@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pwned Search - Hack the System</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #0d0d0d;
+            color: #fff;
+        }
+        input, button {
+            margin: 10px;
+            padding: 15px;
+            font-size: 18px;
+            background: #222;
+            color: #fff;
+            border: 2px solid #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.7), 0 0 20px rgba(0, 0, 255, 0.7), 0 0 30px rgba(128, 0, 128, 0.7);
+            transition: all 0.3s ease-in-out;
+        }
+        input::placeholder {
+            color: #ff0000;
+        }
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            border: 1px solid #fff;
+            padding: 10px;
+            text-align: left;
+            background: #222;
+            color: #fff;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.7), 0 0 20px rgba(0, 0, 255, 0.7), 0 0 30px rgba(128, 0, 128, 0.7);
+            font-size: 14px;
+        }
+        h2 {
+            text-shadow: 0 0 10px #ff0000, 0 0 20px #0000ff, 0 0 30px #800080;
+            animation: pulse 1.5s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 16px;
+            text-shadow: 0 0 5px #ff0000, 0 0 10px #0000ff, 0 0 15px #800080;
+            margin-bottom: 20px;
+        }
+        button:hover {
+            background-color: #ff0000;
+            color: #0d0d0d;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 1), 0 0 30px rgba(0, 0, 255, 1), 0 0 40px rgba(128, 0, 128, 1);
+        }
+
+        @keyframes pulse {
+            0% {
+                text-shadow: 0 0 10px #ff0000, 0 0 20px #0000ff, 0 0 30px #800080;
+            }
+            50% {
+                text-shadow: 0 0 20px #ff0000, 0 0 40px #0000ff, 0 0 60px #800080;
+            }
+            100% {
+                text-shadow: 0 0 10px #ff0000, 0 0 20px #0000ff, 0 0 30px #800080;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h2>Pwned Search - Hack the System</h2>
+    <p>Drop a username or alias to find it scattered across the dark web.</p>
+    <form id="searchForm">
+        <input type="text" id="usr" placeholder="Enter Alias, Username, or Gamertag">
+        <select id="lookup_type">
+            <option value="email">Email</option>
+            <option value="ip">IP</option>
+        </select>
+        <button type="submit">Pwn It!</button>
+    </form>
+    <pre id="out"></pre>
+    
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const username = document.getElementById('usr').value;
+            const lookupType = document.getElementById('lookup_type').value;
+
+            if (!username) {
+                document.getElementById("out").textContent = "Enter something to hunt...";
+                return;
+            }
+
+            const response = await fetch('/search', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `username=${encodeURIComponent(username)}&lookup_type=${encodeURIComponent(lookupType)}`
+            });
+
+            const data = await response.json();
+
+            if (data.error) {
+                document.getElementById("out").textContent = `Error: ${data.error}`;
+            } else {
+                document.getElementById("out").textContent = JSON.stringify(data, null, 2);
+            }
+        });
+    </script>
+</body>
+</html>
